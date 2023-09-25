@@ -1,5 +1,6 @@
-#Chat_Server_Application using Sockets
 
+#Chat_Server_Application using Sockets
+# Aditya Sugandhi (AS22CQ) Author Name
 #server.py
 bash
 ```

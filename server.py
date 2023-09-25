@@ -1,3 +1,5 @@
+# Aditya Sugandhi (AS22CQ) Author Name
+
 import socket
 import select
 import random
