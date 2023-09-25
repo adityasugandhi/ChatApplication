@@ -112,6 +112,7 @@ class Server:
                 print("Error Occured the socket is still open")
         self.client_sockets.clear()
         print("Server has been stopped.")
+        time.sleep(2)
         os._exit(0)
         
 
