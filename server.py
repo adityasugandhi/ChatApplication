@@ -4,6 +4,8 @@ import random
 import threading
 import time
 import sys
+import os
+
 
 try:
     HOST = socket.gethostname()
@@ -19,6 +21,7 @@ class Server:
         self.server_socket.bind((HOST, PORT))
         self.server_socket.listen(10)
         self.clients = {}
+        self.should_stop = False
         self.client_sockets = []
         self.server_messages = []
         self.running = True  # Flag to track server status
@@ -71,6 +74,8 @@ class Server:
         server_message_thread.start()
 
         while self.running:
+            if self.should_stop:
+                break
             readable, _, _ = select.select([self.server_socket], [], [])
             for sock in readable:
                 if sock is self.server_socket:
@@ -78,6 +83,7 @@ class Server:
                     username = client_socket.recv(1024).decode("utf-8")
                     client_thread = threading.Thread(target=self.client_handler, args=(client_socket, username))
                     client_thread.start()
+        self.stop_server()
 
     def send_message_to_all_clients(self, message):
         self.server_messages.append(message)
@@ -86,6 +92,7 @@ class Server:
         while self.running:
             message = input("Enter a message to broadcast to all clients (Type '/exit' to stop the server): ")
             if message == '/exit':
+                self.should_stop= True
                 self.stop_server()
                 break
             else:
@@ -99,10 +106,14 @@ class Server:
             try:
                 client_sock.send("Server is shutting down. Goodbye!".encode("utf-8"))
                 client_sock.close()
+
             except:
                 pass
+                print("Error Occured the socket is still open")
         self.client_sockets.clear()
         print("Server has been stopped.")
+        os._exit(0)
+        
 
 if __name__ == "__main__":
     S = Server()
@@ -126,3 +137,4 @@ if __name__ == "__main__":
         S.run()
     except KeyboardInterrupt:
         S.stop_server()
+
